@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect, FC  } from 'react'
+import axios, {AxiosResponse} from 'axios'
 import './App.css'
 
 import SearchBar from './components/SearchBar/SearchBar'
@@ -8,19 +8,20 @@ import Loader from './components/Loader/Loader'
 import ErrorMessage from './components/ErrorMessage/ErrorMessage'
 import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn'
 import ImageModal from './components/ImageModal/ImageModal'
+import { Image, UnsplashImage } from './type'
 
-function App() {
-    const [images, setImages] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [page, setPage] = useState(1);
-    const [hasMoreImages, setHasMoreImages] = useState(true);
-    const [query, setQuery] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
+const App: FC = () => {
+    const [images, setImages] = useState<Image[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    const [page, setPage] = useState<number>(1);
+    const [hasMoreImages, setHasMoreImages] = useState<boolean>(true);
+    const [query, setQuery] = useState<string>('');
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [selectedImage, setSelectedImage] = useState<Image | null>(null);
     const apiKey = 'u1pYBtTMwptTTgHzMmIFHs3Gsp7PkMcfyNKZkU_OJJk';
 
-    async function fetchImages(query, pageNum) {
+    async function fetchImages(query: string, pageNum: number): Promise<void> {
         try {
             setLoading(true);
             
@@ -31,13 +32,13 @@ function App() {
                 page: pageNum,
                 per_page: 12,
             };
-            const response = await axios.get(`https://api.unsplash.com/search/photos/`, {
+            const response: AxiosResponse<any> = await axios.get<UnsplashImage, AxiosResponse<any>>(`https://api.unsplash.com/search/photos/`, {
                 params: params,
                 headers: {
                     Authorization: `Client-ID ${apiKey}`
                 }
             });
-            const normalizeData = response.data.results.map(({ alt_description, id, urls }) => ({
+            const normalizeData: Image[] = response.data.results.map(({ alt_description, id, urls }: any) => ({
                 alt: alt_description,
                 id,
                 small: urls.small,
@@ -69,22 +70,22 @@ function App() {
 
     
 
-    const handleSearch = (query) => {
+    const handleSearch = (query: string): void => {
         setQuery(query);
         setPage(1);
         setImages([]);
     };
 
-    const loadMore = () => {
+    const loadMore = (): void => {
         setPage(page + 1);
     };
 
-    const handleImageClick = (image) => {
+    const handleImageClick = (image: Image): void => {
         setSelectedImage(image);
         setIsModalOpen(true);
     };
 
-    const closeModal = () => {
+    const closeModal = (): void => {
         setSelectedImage(null);
         setIsModalOpen(false);
     };

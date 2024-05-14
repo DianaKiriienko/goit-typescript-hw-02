@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, FormEvent, FC } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import css from "./SearchBar.module.css";
 import { GoSearch } from "react-icons/go";
 
-const SearchBar = ({ onSubmit }) => {
-    const [query, setQuery] = useState('');
+interface SearchBarProps {
+    onSubmit: (query: string) => void;
+}
 
-    const handleSubmit = (e) => {
+const SearchBar: FC<SearchBarProps> = ({ onSubmit }) => {
+    const [query, setQuery] = useState<string>('');
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!/^[a-zA-Z\s]*$/.test(query.trim())) {
             toast("❌   Please enter valid letters only.");
@@ -20,6 +24,10 @@ const SearchBar = ({ onSubmit }) => {
         setQuery('');
     };
 
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value);
+    };
+
     return (
         <header className={css.header}>
             <form className={css.form} onSubmit={handleSubmit}>
@@ -27,7 +35,7 @@ const SearchBar = ({ onSubmit }) => {
                     type="text"
                     placeholder="Search images and photos..."
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={handleInputChange}
                     className={css.input}
                 />
                 <button type="submit" className={css.btn}><GoSearch size={20} /></button>

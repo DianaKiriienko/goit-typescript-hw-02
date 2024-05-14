@@ -1,6 +1,14 @@
 import Modal from 'react-modal';
+import { FC } from 'react';
 
-
+interface ImageModalProps {
+    images: {
+        regular: string;
+        alt: string;
+    };
+    isOpen: boolean;
+    onRequestClose: () => void;
+}
 
 const customStyles = {
   overlay: {
@@ -21,7 +29,7 @@ const customStyles = {
 Modal.setAppElement('#root');
 
 
-const ImageModal = ({ images, isOpen, onRequestClose }) => {
+const ImageModal: FC<ImageModalProps> = ({ images, isOpen, onRequestClose }) => {
  
 
   return (
